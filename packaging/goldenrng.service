@@ -1,0 +1,21 @@
+[Unit]
+Description=Golden RNG Enterprise - Cryptographic Random Number Generator Service
+Documentation=https://github.com/goldenrng/enterprise
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/goldenrng -m file -o /dev/urandom
+Restart=on-failure
+RestartSec=10
+StandardOutput=null
+StandardError=journal
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/goldenrng
+
+[Install]
+WantedBy=multi-user.target
+

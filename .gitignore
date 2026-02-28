@@ -1,0 +1,56 @@
+# Build directories
+build/
+src/build/
+src/release/
+
+# Compiled object files
+*.o
+*.obj
+*.so
+*.a
+*.dylib
+*.dll
+
+# Executables
+goldenrng
+test_*
+src/goldenrng
+
+# Dependency files
+*.d
+*.dwo
+*.pdb
+
+# Debug files
+*.log
+*.tmp
+
+# Coverage files
+*.gcda
+*.gcno
+*.gcov
+coverage.info
+*.profdata
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Test outputs
+test_output/
+*.out
+
+# RPM build
+rpmbuild/
+*.rpm
+
+# Deb build
+*.deb
+
+# Package temp files
+pkg/
+

@@ -1,0 +1,19 @@
+Package: golden-rng
+Version: 5.0.0
+Section: utils
+Priority: optional
+Architecture: any
+Depends: libc6 (>= 2.17), libssl3 | libssl1.1 (>= 1.1.0)
+Maintainer: Golden RNG Team <surffero2077@proton.me>
+Description: Golden RNG Enterprise - Cryptographic Random Number Generator
+ A high-performance cryptographic random number generator (CSPRNG) implementing
+ the AUR3ES algorithm with SHA-512 key derivation.
+ .
+ Features:
+  - Cryptographically secure random number generation
+  - Multi-platform support
+  - SIMD optimized (SSE2, AVX2, AVX-512)
+  - Multi-threaded parallel generation
+  - Full NIST SP 800-22 statistical test suite
+Homepage: https://github.com/phenixsam/aur3es
+

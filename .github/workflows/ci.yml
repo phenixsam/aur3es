@@ -1,0 +1,201 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        compiler: [gcc, clang]
+        build_type: [release, debug]
+        include:
+          - os: ubuntu-latest
+            compiler: gcc
+            build_type: sanitize
+          - os: ubuntu-latest
+            compiler: gcc
+            build_type: coverage
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libssl-dev pkg-config
+
+      - name: Install dependencies (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install openssl@3
+
+      - name: Set compiler
+        env:
+          CC: ${{ matrix.compiler }}
+        run: |
+          if [ "$CC" = "gcc" ]; then
+            echo "CC=gcc" >> $GITHUB_ENV
+          else
+            echo "CC=clang" >> $GITHUB_ENV
+          fi
+
+      - name: Build
+        working-directory: src
+        run: |
+          make clean
+          make BUILD_TYPE=${{ matrix.build_type }}
+
+      - name: Run tests
+        working-directory: src
+        run: |
+          make test
+
+      - name: Run benchmark
+        working-directory: src
+        run: |
+          ./goldenrng -m benchmark -s 10M
+
+      - name: Run advanced tests
+        working-directory: src
+        run: |
+          ./goldenrng -m advanced
+
+      - name: Upload coverage
+        if: matrix.build_type == 'coverage'
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/coverage.info
+          flags: unittests
+
+  cross-compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install cross-compile tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-x86-64-linux-gnu gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu
+
+      - name: Build for x86_64
+        working-directory: src
+        run: |
+          make clean
+          make CC=x86_64-linux-gnu-gcc
+
+      - name: Build for ARM32
+        working-directory: src
+        run: |
+          make clean
+          make CC=arm-linux-gnueabihf-gcc
+
+      - name: Build for ARM64
+        working-directory: src
+        run: |
+          make clean
+          make CC=aarch64-linux-gnu-gcc
+
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libssl-dev cppcheck clang-tidy
+
+      - name: Run cppcheck
+        working-directory: src
+        run: |
+          make analyze || true
+
+      - name: Run clang-tidy
+        working-directory: src
+        run: |
+          clang-tidy -header-filter='.*' -checks='*' core/*.c main.c -- -I. -Icore -Iplatform -Iutils || true
+
+  code-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libssl-dev pkg-config lcov
+
+      - name: Build with coverage
+        working-directory: src
+        run: |
+          make clean
+          make BUILD_TYPE=coverage
+
+      - name: Run tests with coverage
+        working-directory: src
+        run: |
+          ./goldenrng -m unittests
+          ./goldenrng -m kat
+          ./goldenrng -m determinism
+
+      - name: Generate coverage report
+        working-directory: src
+        run: |
+          lcov --capture --directory . --output-file coverage.info
+          lcov --remove coverage.info '/usr/*' --output-file coverage.info
+          lcov --summary coverage.info
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: src/coverage.info
+          flags: unittests
+          name: golden-rng
+
+  release:
+    needs: [build, cross-compile, static-analysis, code-coverage]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libssl-dev pkg-config
+
+      - name: Build release
+        working-directory: src
+        run: |
+          make clean
+          make BUILD_TYPE=release
+
+      - name: Create distribution package
+        run: |
+          VERSION=$(git describe --tags --abbrev=0)
+          mkdir -p dist
+          cp src/goldenrng dist/
+          tar -czvf goldenrng-${VERSION}-linux-x64.tar.gz -C dist goldenrng
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: goldenrng-*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

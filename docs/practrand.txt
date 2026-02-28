@@ -1,0 +1,55 @@
+./goldenrng -t 7 | ../practrand/RNG_test stdin16 -te 1 -tf 2 -multithreaded 
+
+======================================================
+  GOLDEN RNG ENTERPRISE v5.0
+  Generador Criptografico Multiplataforma
+  Plataforma: Linux (x64)
+======================================================
+
+RNG_test using PractRand version 0.95
+RNG = RNG_stdin16, seed = unknown
+test set = expanded, folding = extra
+
+rng=RNG_stdin16, seed=unknown
+length= 64 megabytes (2^26 bytes), time= 2.1 seconds
+  no anomalies in 1203 test result(s)
+
+rng=RNG_stdin16, seed=unknown
+length= 128 megabytes (2^27 bytes), time= 14.1 seconds
+  no anomalies in 1283 test result(s)
+
+rng=RNG_stdin16, seed=unknown
+length= 256 megabytes (2^28 bytes), time= 27.7 seconds
+  no anomalies in 1361 test result(s)
+
+rng=RNG_stdin16, seed=unknown
+length= 512 megabytes (2^29 bytes), time= 43.9 seconds
+  no anomalies in 1439 test result(s)
+
+rng=RNG_stdin16, seed=unknown
+length= 1 gigabyte (2^30 bytes), time= 66.4 seconds
+  no anomalies in 1522 test result(s)
+
+rng=RNG_stdin16, seed=unknown
+length= 2 gigabytes (2^31 bytes), time= 100 seconds
+  no anomalies in 1606 test result(s)
+
+rng=RNG_stdin16, seed=unknown
+length= 4 gigabytes (2^32 bytes), time= 156 seconds
+  no anomalies in 1696 test result(s)
+
+rng=RNG_stdin16, seed=unknown
+length= 8 gigabytes (2^33 bytes), time= 265 seconds
+  no anomalies in 1802 test result(s)
+
+rng=RNG_stdin16, seed=unknown
+length= 16 gigabytes (2^34 bytes), time= 470 seconds
+  no anomalies in 1905 test result(s)
+
+rng=RNG_stdin16, seed=unknown
+length= 32 gigabytes (2^35 bytes), time= 893 seconds
+  no anomalies in 1995 test result(s)
+
+rng=RNG_stdin16, seed=unknown
+length= 64 gigabytes (2^36 bytes), time= 1859 seconds
+  no anomalies in 2098 test result(s)

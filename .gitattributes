@@ -1,0 +1,17 @@
+# Set default behavior to normalize line endings
+* text=auto
+
+# Explicitly declare text files that should be normalized
+*.c text eol=lf
+*.h text eol=lf
+*.sh text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Binary files
+*.bin binary
+*.so binary
+*.a binary
+*.o binary
+

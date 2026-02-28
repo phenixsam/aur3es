@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Golden RNG Enterprise - High-performance cryptographic random number generator (CSPRNG)"
+    />
+    <title>Golden RNG Enterprise - Cryptographic Random Number Generator</title>
+    <style>
+      :root {
+        --primary: #f7931a;
+        --primary-dark: #d4820f;
+        --dark: #1a1a2e;
+        --darker: #0f0f1a;
+        --light: #eaeaea;
+        --gray: #6c757d;
+        --success: #28a745;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
+        color: var(--light);
+        background: var(--darker);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      header {
+        background: var(--dark);
+        padding: 20px 0;
+        border-bottom: 3px solid var(--primary);
+      }
+
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--primary);
+        text-decoration: none;
+      }
+
+      .logo span {
+        color: var(--light);
+      }
+
+      .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 30px;
+      }
+
+      .nav-links a {
+        color: var(--light);
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: var(--primary);
+      }
+
+      .hero {
+        padding: 80px 0;
+        text-align: center;
+        background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+      }
+
+      .hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 20px;
+        background: linear-gradient(90deg, var(--primary), #ffd700);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero p {
+        font-size: 1.3rem;
+        color: var(--gray);
+        max-width: 700px;
+        margin: 0 auto 40px;
+      }
+
+      .badge {
+        display: inline-block;
+        background: var(--primary);
+        color: var(--dark);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: bold;
+        margin: 5px;
+      }
+
+      .badge.success {
+        background: var(--success);
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 15px 40px;
+        background: var(--primary);
+        color: var(--dark);
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        transition: all 0.3s;
+        margin: 10px;
+      }
+
+      .btn:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+      }
+
+      .btn-outline {
+        background: transparent;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+      }
+
+      .btn-outline:hover {
+        background: var(--primary);
+        color: var(--dark);
+      }
+
+      section {
+        padding: 60px 0;
+      }
+
+      h2 {
+        font-size: 2.2rem;
+        margin-bottom: 30px;
+        color: var(--primary);
+      }
+
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+      }
+
+      .feature-card {
+        background: var(--dark);
+        padding: 30px;
+        border-radius: 12px;
+        border: 1px solid #333;
+        transition: transform 0.3s;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--primary);
+      }
+
+      .feature-card h3 {
+        font-size: 1.4rem;
+        margin-bottom: 15px;
+        color: var(--light);
+      }
+
+      .feature-card p {
+        color: var(--gray);
+      }
+
+      .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+      }
+
+      .stats {
+        background: var(--dark);
+        padding: 60px 0;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        text-align: center;
+      }
+
+      .stat-item {
+        padding: 20px;
+      }
+
+      .stat-number {
+        font-size: 3rem;
+        font-weight: bold;
+        color: var(--primary);
+      }
+
+      .stat-label {
+        color: var(--gray);
+        font-size: 1.1rem;
+      }
+
+      .tests {
+        background: var(--dark);
+      }
+
+      .test-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 30px;
+      }
+
+      .test-table th,
+      .test-table td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #333;
+      }
+
+      .test-table th {
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .test-table .pass {
+        color: var(--success);
+        font-weight: bold;
+      }
+
+      code {
+        background: var(--darker);
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+        color: var(--primary);
+      }
+
+      pre {
+        background: var(--darker);
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 20px 0;
+      }
+
+      footer {
+        background: var(--dark);
+        padding: 40px 0;
+        text-align: center;
+        border-top: 1px solid #333;
+      }
+
+      footer p {
+        color: var(--gray);
+      }
+
+      footer a {
+        color: var(--primary);
+      }
+
+      .performance {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      .perf-card {
+        background: var(--dark);
+        padding: 25px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      .perf-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--primary);
+      }
+
+      .perf-label {
+        color: var(--gray);
+        margin-top: 10px;
+      }
+
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <nav>
+          <a href="#" class="logo">golden<span>rng</span></a>
+          <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#performance">Performance</a></li>
+            <li><a href="#tests">Tests</a></li>
+            <li><a href="#usage">Usage</a></li>
+            <li><a href="#download">Download</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="container">
+        <h1>Golden RNG Enterprise</h1>
+        <p>
+          High-performance cryptographic random number generator (CSPRNG)
+          implementing the AUR3ES algorithm with SHA-512 key derivation.
+        </p>
+        <div>
+          <span class="badge">v5.0</span>
+          <span class="badge success">2,500+ Tests Passed</span>
+          <span class="badge">Open Source</span>
+        </div>
+        <div style="margin-top: 40px">
+          <a href="#download" class="btn">Get Started</a>
+          <a href="#features" class="btn btn-outline">Learn More</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="container">
+        <h2>Key Features</h2>
+        <div class="features">
+          <div class="feature-card">
+            <div class="feature-icon">🔐</div>
+            <h3>Cryptographically Secure</h3>
+            <p>
+              AUR3ES algorithm with SHA-512 key derivation, 512-bit internal
+              state, and multiple entropy sources.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>High Performance</h3>
+            <p>
+              Up to 1.2 GB/s with 8-thread parallel generation. SIMD optimized
+              for SSE2, AVX2, and AVX-512.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔄</div>
+            <h3>Multi-Platform</h3>
+            <p>
+              Works on Linux, Windows, macOS, and supports x86_64, ARM64, and
+              ARM32 architectures.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">✅</div>
+            <h3>Extensively Tested</h3>
+            <p>
+              Passed Dieharder, PractRand (64GB), TestU01 BigCrush, and NIST SP
+              800-22 test suites.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3>Security Hardened</h3>
+            <p>
+              Secure memory zeroing, mlock() to prevent swapping, constant-time
+              operations, entropy validation.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Real-Time Monitoring</h3>
+            <p>
+              Built-in statistics, RNG health monitoring, performance metrics,
+              and diagnostic tools.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats" id="performance">
+      <div class="container">
+        <h2>Performance</h2>
+        <p style="color: var(--gray); margin-bottom: 30px">
+          Benchmark results on modern 8-core CPU @ 3.5GHz
+        </p>
+        <div class="performance">
+          <div class="perf-card">
+            <div class="perf-value">280 MB/s</div>
+            <div class="perf-label">Sequential Generation</div>
+          </div>
+          <div class="perf-card">
+            <div class="perf-value">893 MB/s</div>
+            <div class="perf-label">4-Thread Parallel</div>
+          </div>
+          <div class="perf-card">
+            <div class="perf-value">1.2 GB/s</div>
+            <div class="perf-label">8-Thread Parallel</div>
+          </div>
+          <div class="perf-card">
+            <div class="perf-value">3.5x</div>
+            <div class="perf-label">Speedup with Parallelization</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tests">
+      <div class="container">
+        <h2>Statistical Test Results</h2>
+        <p style="color: var(--gray); margin-bottom: 20px">
+          Golden RNG has been exhaustively tested using industry-standard test
+          suites.
+        </p>
+        <table class="test-table">
+          <thead>
+            <tr>
+              <th>Test Suite</th>
+              <th>Tests</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Dieharder</td>
+              <td>17</td>
+              <td class="pass">✅ ALL PASSED</td>
+            </tr>
+            <tr>
+              <td>PractRand</td>
+              <td>2098+</td>
+              <td class="pass">✅ ALL PASSED (up to 64 GB)</td>
+            </tr>
+            <tr>
+              <td>TestU01 SmallCrush</td>
+              <td>15</td>
+              <td class="pass">✅ ALL PASSED</td>
+            </tr>
+            <tr>
+              <td>TestU01 Crush</td>
+              <td>144</td>
+              <td class="pass">✅ ALL PASSED</td>
+            </tr>
+            <tr>
+              <td>TestU01 BigCrush</td>
+              <td>160</td>
+              <td class="pass">✅ ALL PASSED</td>
+            </tr>
+            <tr>
+              <td>NIST SP 800-22</td>
+              <td>15</td>
+              <td class="pass">✅ ALL PASSED</td>
+            </tr>
+            <tr>
+              <td>Advanced Built-in</td>
+              <td>10</td>
+              <td class="pass">✅ ALL PASSED</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin-top: 20px; color: var(--primary); font-weight: bold">
+          Total: 2,500+ statistical tests - ALL PASSED
+        </p>
+      </div>
+    </section>
+
+    <section id="usage">
+      <div class="container">
+        <h2>Quick Start</h2>
+        <h3 style="color: var(--light); margin: 20px 0 10px">Build</h3>
+        <pre><code>git clone https://github.com/phenixsam/aur3es.git
+cd aur3es/src
+make</code></pre>
+
+        <h3 style="color: var(--light); margin: 20px 0 10px">Basic Usage</h3>
+        <pre><code># Generate random bytes to stdout
+./goldenrng
+
+# Generate 10MB to file
+./goldenrng -m file -o random.bin -s 10M
+
+# Run full test suite
+./goldenrng -m advanced
+
+# Parallel benchmark
+./goldenrng -m benchmark -s 100M -t 4</code></pre>
+
+        <h3 style="color: var(--light); margin: 20px 0 10px">
+          Command Line Options
+        </h3>
+        <table class="test-table">
+          <thead>
+            <tr>
+              <th>Option</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>-m, --mode</code></td>
+              <td>
+                Operation mode (stdout, file, test, benchmark, simd, kat,
+                unittests, advanced)
+              </td>
+            </tr>
+            <tr>
+              <td><code>-o, --output</code></td>
+              <td>Output file name</td>
+            </tr>
+            <tr>
+              <td><code>-s, --size</code></td>
+              <td>Size to generate (1G, 100M, 500K)</td>
+            </tr>
+            <tr>
+              <td><code>-t, --threads</code></td>
+              <td>Number of threads for parallel benchmark</td>
+            </tr>
+            <tr>
+              <td><code>-S, --seed</code></td>
+              <td>Seed for deterministic mode</td>
+            </tr>
+            <tr>
+              <td><code>-v, --verbose</code></td>
+              <td>Enable verbose output</td>
+            </tr>
+            <tr>
+              <td><code>-V, --version</code></td>
+              <td>Show version information</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="download" style="background: var(--dark)">
+      <div class="container" style="text-align: center">
+        <h2>Get Started</h2>
+        <p style="color: var(--gray); max-width: 600px; margin: 0 auto 30px">
+          Download the source code and start generating cryptographically secure
+          random numbers.
+        </p>
+        <a href="https://github.com/phenixsam/aur3es" class="btn"
+          >View on GitHub</a
+        >
+        <a
+          href="https://github.com/phenixsam/aur3es/releases"
+          class="btn btn-outline"
+          >Releases</a
+        >
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <p>Golden RNG Enterprise v5.0</p>
+        <p style="margin-top: 10px">
+          <a href="https://github.com/phenixsam/aur3es">GitHub</a> |
+          <a href="docs/goldenrng.1">Man Page</a> |
+          <a href="docs/TECHNICAL.md">Documentation</a>
+        </p>
+        <p style="margin-top: 20px; font-size: 0.9rem">
+          Licensed under
+          <a href="https://www.gnu.org/licenses/gpl-3.0.html"
+            >GNU General Public License v3</a
+          >
+          | © 2024-2026 Golden RNG Team
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
